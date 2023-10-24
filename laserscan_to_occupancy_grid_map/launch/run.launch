@@ -1,0 +1,12 @@
+<launch>
+
+    <!-- run move base -->
+    <node pkg="move_base" type="move_base" name="move_base_node" output="screen">
+
+        <rosparam file="$(find laserscan_to_occupancy_grid_map)/move_base_config/move_base.yaml" command="load" />
+
+        <rosparam file="$(find laserscan_to_occupancy_grid_map)/move_base_config/local_costmap_params.yaml" command="load" ns="local_costmap" />
+
+    </node>
+
+</launch>

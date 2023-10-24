@@ -1,0 +1,74 @@
+<!-- -->
+<launch>
+    <arg name="role_name" default="ego_vehicle"/>
+
+    <node pkg="tf" type="static_transform_publisher" name="odom_broadcaster" args="0 0 0 0 0 0 1 map odom 10" />
+
+    <node pkg="carla_navigation" type="base.py" name="carla_navigation_base" output="screen">
+        <param name="role_name" value="$(arg role_name)"/>
+    </node>
+
+    <node pkg="carla_navigation" type="planner.py" name="carla_navigation_planner" output="screen">
+        <param name="role_name" value="$(arg role_name)"/>
+    </node>
+
+    <!--- Run optimization test node -->
+    <node pkg="teb_local_planner" type="teb_planner" name="teb_planner" output="screen">
+        <rosparam>
+                footprint_model:
+                    type: "circular"
+                    radius: 0.7
+       </rosparam>
+    </node>
+
+    <!--- pid controller node -->
+    <include file="$(find pid)/launch/differential_drive_carla.launch" />
+
+    <!-- run pointcloud_to_laserscan node -->
+    <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan">
+
+        <remap from="cloud_in" to="/carla/ego_vehicle/lidar"/>
+
+        <rosparam>
+            target_frame: ego_vehicle # Leave disabled to output scan in pointcloud frame
+            transform_tolerance: 0.01
+            min_height: -1.05
+            max_height: 1.5
+
+            angle_min: -1.57 # -M_PI/2
+            angle_max: 1.57 # M_PI/2
+            angle_increment: 0.0087 # M_PI/360.0
+            scan_time: 0.3333
+            range_min: 0.45
+            range_max: 15.0
+            use_inf: true
+
+            # Concurrency level, affects number of pointclouds queued for processing and number of threads used
+            # 0 : Detect number of cores
+            # 1 : Single threaded
+            # 2->inf : Parallelism level
+            concurrency_level: 1
+        </rosparam>
+
+    </node>
+
+    <!-- run move base (laser scan to occupancy grid) -->
+    <node pkg="move_base" type="move_base" name="move_base_node" output="screen">
+
+        <rosparam file="$(find laserscan_to_occupancy_grid_map)/move_base_config/move_base.yaml" command="load" />
+        <rosparam file="$(find laserscan_to_occupancy_grid_map)/move_base_config/global_costmap_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find laserscan_to_occupancy_grid_map)/move_base_config/local_costmap_params.yaml" command="load" ns="local_costmap" />
+
+    </node>
+
+    <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping">
+        <rosparam>
+            base_frame: ego_vehicle
+        </rosparam>
+    </node>
+
+    <!-- RVIZ -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find carla_navigation)/config/rviz.rviz" />
+
+</launch>
+

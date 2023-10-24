@@ -1,0 +1,40 @@
+# global costmap is static
+rolling_window: true
+
+# publish rate
+publish_frequency: 10.0
+
+# width of the map in meters
+width: 10.0
+
+# height of the map in meters
+height: 10.0
+
+# resolution of the map in meters/cell
+resolution: 0.3
+
+# map origin
+origin_x: 0.0
+origin_y: 0.0
+
+# global costmap will operate in the map frame, transform between this and robot-base frame must be available
+global_frame: map
+
+# name of the frame at base-link of the spencer robot
+robot_base_frame: ego_vehicle
+
+# not really used for our purpose
+footprint: [[0.796, 0.495], [0.796, -0.495], [-0.831, -0.495], [-0.831, 0.495] ]
+
+plugins:
+ - {name: obstacles, type: "costmap_2d::ObstacleLayer"}
+ # - {name: inflater, type: "costmap_2d::InflationLayer"}
+
+# sources for obstacle observation and their data types
+obstacles:
+    observation_sources: /scan
+    /scan: {data_type: LaserScan, sensor_frame: ego_vehicle, marking: true, clearing: true, obstacle_range: 15, raytrace_range: 15}
+
+    track_unknown_space: true
+
+always_send_full_costmap: true

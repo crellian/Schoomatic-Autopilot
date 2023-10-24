@@ -1,0 +1,13 @@
+# global costmap is static
+rolling_window: false
+
+# publish rate
+publish_frequency: 10.0
+
+# global costmap will operate in the map frame, transform between this and robot-base frame must be available
+global_frame: map
+
+# name of the frame at base-link of the spencer robot
+robot_base_frame: ego_vehicle
+
+plugins: []
