@@ -1,4 +1,4 @@
-# Autonomous Driving in Carla and ROS
+# Autopilot Differential-Drive Robot in Carla and ROS
 ### Run:
 1. start carla server
 `cd /opt/carla-simulator
