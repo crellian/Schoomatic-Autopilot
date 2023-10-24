@@ -8,16 +8,6 @@ or start schoomatic docker
 3. start carla client
 `source ~/carla-ros-bridge/catkin_ws/devel/setup.bash
 roslaunch carla_ros_bridge carla_ros_bridge_with_example_ego_vehicle.launch timeout:=20000`
-4. start control message translator
-`source ~/carla-ros-bridge/catkin_ws/devel/setup.bash
-roslaunch carla_twist_to_control carla_twist_to_control.launch`
-5. start controller
-`source ~/catkin_ws/devel/setup.bash
-rosrun carla_navigation controller.py`
-6. start planner
-`source ~/catkin_ws/devel/setup.bash
-rosrun carla_navigation planner.py`
-### To be implemented:
-1. Lauch files that easily lauches everything
-2. Debugging
-3. Differential wheeled robot
+4. start navigation
+`source ~/_carla-ros-bridge/catkin_ws/devel/setup.bash
+roslaunch carla_navigation carla_navigation.launch`
